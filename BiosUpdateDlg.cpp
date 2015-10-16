@@ -118,7 +118,7 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	hGl = LoadResource(NULL,hSrc);
 	dwLen = SizeofResource(NULL,hSrc);
 	lpBuf = (LPBYTE)LockResource(hGl);
-	bRet = fp.Open("idrvdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	bRet = fp.Open("idrvdll32e.dll",CFile::modeCreate|CFile::modeReadWrite);
 	fp.Write((LPBYTE)lpBuf,dwLen);
 	fp.Close();
 #endif
@@ -127,7 +127,7 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	hGl = LoadResource(NULL,hSrc);
 	dwLen = SizeofResource(NULL,hSrc);
 	lpBuf = (LPBYTE)LockResource(hGl);
-	bRet = fp.Open("pmxdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	bRet = fp.Open("pmxdll32e.dll",CFile::modeCreate|CFile::modeReadWrite);
 	fp.Write((LPBYTE)lpBuf,dwLen);
 	fp.Close();
 #endif
@@ -220,8 +220,8 @@ HCURSOR CBiosUpdateDlg::OnQueryDragIcon()
 void CBiosUpdateDlg::OnBnClickedUpdate()
 {
 	// TODO: Add your control notification handler code here
-	//GUID CORM  = { 0x0ff0a55a, 0x0003, 0x0204, { 0x06, 0x02, 0x10, 0x15, 0x20, 0x01, 0x21, 0x00 } };
-	GUID BYTCR = { 0x0ff0a55a, 0x0003, 0x0204, { 0x06, 0x02, 0x10, 0x0b, 0x20, 0x00, 0x21, 0x00 } };
+	GUID CORM  = { 0x0ff0a55a, 0x0003, 0x0204, { 0x06, 0x02, 0x10, 0x15, 0x20, 0x01, 0x21, 0x00 } };
+	//GUID BYTCR = { 0x0ff0a55a, 0x0003, 0x0204, { 0x06, 0x02, 0x10, 0x0b, 0x20, 0x00, 0x21, 0x00 } };
 	//GUID CHT3  = { 0x0ff0a55a, 0x0003, 0x0204, { 0x06, 0x02, 0x10, 0x0e, 0x20, 0x00, 0x21, 0x00 } };
 
 	char buff[16]={0};
@@ -265,7 +265,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	}
 	fp.Seek(0x10,SEEK_SET);
 	fp.Read(buff,16);
-	if (memcmp(buff,(char*)&BYTCR,16))
+	if (memcmp(buff,(char*)&CORM,16))
 	{
 		MessageBox("Bios file is invalid!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
@@ -556,10 +556,10 @@ end:
 		DeleteFile("fptw.exe");
 #endif
 #ifdef IDRV_DLL
-		DeleteFile("idrvdll.dll");
+		DeleteFile("idrvdll32e.dll");
 #endif
 #ifdef PMX_DLL
-		DeleteFile("pmxdll.dll");
+		DeleteFile("pmxdll32e.dll");
 #endif
 #ifdef FPARTS_TXT
 		DeleteFile("fparts.txt");
@@ -609,10 +609,10 @@ void CBiosUpdateDlg::OnDestroy()
 	DeleteFile("fptw.exe");
 #endif
 #ifdef IDRV_DLL
-	DeleteFile("idrvdll.dll");
+	DeleteFile("idrvdll32e.dll");
 #endif
 #ifdef PMX_DLL
-	DeleteFile("pmxdll.dll");
+	DeleteFile("pmxdll32e.dll");
 #endif
 #ifdef FPARTS_TXT
 	DeleteFile("fparts.txt");
