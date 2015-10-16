@@ -24,8 +24,9 @@ protected:
 	BOOL  m_bExistKey;
 	BOOL  m_bIsx64;
 	UINT  m_nBiosSize;
-	CString m_szPath,m_curPath,m_strSSN,m_strBSN;
+	CString m_szPath,m_strSSN,m_strBSN;
 	int   m_nTxe,m_nSN;
+	char  m_szTempDir[MAX_PATH],m_curPath[2048];
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

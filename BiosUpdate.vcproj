@@ -261,6 +261,42 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\res\afuwin.exe"
+			>
+		</File>
+		<File
+			RelativePath=".\res\amidewin.exe"
+			>
+		</File>
+		<File
+			RelativePath=".\res\amifldrv32.sys"
+			>
+		</File>
+		<File
+			RelativePath=".\res\amifldrv64.sys"
+			>
+		</File>
+		<File
+			RelativePath=".\res\Check.exe"
+			>
+		</File>
+		<File
+			RelativePath=".\res\fparts.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\res\fptw.exe"
+			>
+		</File>
+		<File
+			RelativePath=".\res\Idrvdll.dll"
+			>
+		</File>
+		<File
+			RelativePath=".\res\Pmxdll.dll"
+			>
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>

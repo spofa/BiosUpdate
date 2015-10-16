@@ -9,6 +9,15 @@
 #define new DEBUG_NEW
 #endif
 
+#define CHECK_EXE
+#define FPTW_EXE
+#define IDRV_DLL
+#define PMX_DLL
+#define FPARTS_TXT
+#define AFUWIN_EXE
+#define AMIDEWIN_EXE
+#define AMIFLDRV32_DLL
+#define AMIFLDRV64_DLL
 
 // CBiosUpdateDlg dialog
 
@@ -53,9 +62,7 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	DragAcceptFiles();
 
-	char curPath[2048]={0};
-	GetCurrentDirectory(2048,curPath);
-	m_curPath=curPath;
+	GetCurrentDirectory(2048,m_curPath);
 	typedef BOOL (WINAPI* ChangeWindowMessageFilterFn)( UINT, DWORD );
 	HMODULE hUserMod = NULL;
 	BOOL bResult = FALSE;
@@ -79,6 +86,97 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 
 	SnRefresh();
 
+	strcpy(m_szTempDir,getenv("SystemRoot"));
+	strcat(m_szTempDir,"\\Temp");
+	DWORD dwLen;
+	CFile fp;
+	BOOL bRet;
+	SetCurrentDirectory(m_szTempDir);
+//---------------------------------------------------------------------
+	//Microsoft tools
+#ifdef CHECK_EXE
+	HRSRC hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_CHECK),"DATA");
+	HGLOBAL hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	LPBYTE lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("Check.exe",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+	//Intel tools
+#ifdef FPTW_EXE
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_FPTW),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("fptw.exe",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef IDRV_DLL
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_IDRVDLL),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("idrvdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef PMX_DLL
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_PMXDLL),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("pmxdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef FPARTS_TXT
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_FPARTS),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("fparts.txt",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+	//AMI tools
+#ifdef AFUWIN_EXE
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_AFUWIN),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("afuwin.exe",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef AMIDEWIN_EXE
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_AMIDEWIN),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("amidewin.exe",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef AMIFLDRV32_DLL
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_AMIFLDRV32),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("amifldrv32.sys",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
+#ifdef AMIFLDRV64_DLL
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_AMIFLDRV64),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("amifldrv64.sys",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
+#endif
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -182,6 +280,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	m_nBiosSize <<= 12;
 	m_nBiosSize = 0x800000 - m_nBiosSize;
 	fp.Close();
+	SetCurrentDirectory(m_szTempDir);
 	CloseHandle(CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)KeyThread,this,0,NULL));
 }
 
@@ -210,8 +309,9 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	CFile fp1,fp2;
 	DWORD fLen;
 	BYTE* fBuff;
-	CString fw=p->m_curPath,cmd;
-	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -i",&sa,&sa,TRUE,0,NULL,p->m_curPath,&si,&pi);
+	CString cmd;
+	SetCurrentDirectory(p->m_szTempDir);
+	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -i",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
 	if(retval)
 	{
 		WaitForSingleObject(pi.hThread,INFINITE);//等待命令行执行完毕
@@ -245,7 +345,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 		goto end;
 	}
 
-	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -dumplock",&sa,&sa,TRUE,0,NULL,p->m_curPath,&si,&pi);
+	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -dumplock",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
 	if(retval)
 	{
 		WaitForSingleObject(pi.hThread,INFINITE);//等待命令行执行完毕
@@ -284,26 +384,43 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 		delete szRegion;
 	}
 	Sleep(2000);
-	p->SetDlgItemText(IDC_STATUS,"Saving product key");
-	retval=CreateProcess(NULL,"powershell.exe (get-wmiobject softwarelicensingservice).OA3xOriginalProductKey",&sa,&sa,TRUE,0,NULL,p->m_curPath,&si,&pi);
+	//////////////////////////////////////////////////////////////////////
+	retval=CreateProcess(NULL,"cmd.exe /c Check.exe",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
 	if(retval)
 	{
 		WaitForSingleObject(pi.hThread,INFINITE);//等待命令行执行完毕
+		GetExitCodeProcess(pi.hProcess,&retCode1);
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
-		dwLen=GetFileSize(hReadPipe,NULL);
-		CString szCmdLine(' ',dwLen);
-		retval=ReadFile(hReadPipe,(LPSTR)(LPCTSTR)szCmdLine,dwLen,&dwRead,NULL);
-		if (szCmdLine.GetLength() == 31)
+		if (retCode1 != 0)
 		{
-			char szDPK[20]={0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-							0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-							0x1d,0x00,0x00,0x00};
-			fp.Open("key.bin",CFile::modeCreate|CFile::modeWrite|CFile::typeBinary);
-			fp.Write(szDPK,20);
-			fp.Write((LPSTR)(LPCTSTR)szCmdLine,29);
-			fp.Close();
-			p->m_bExistKey = TRUE;
+			p->m_bExistKey = FALSE;
+			p->SetDlgItemText(IDC_STATUS,"Product key not found!");
+		}
+		else
+		{
+			p->SetDlgItemText(IDC_STATUS,"Found product key, saving...");
+			dwLen=GetFileSize(hReadPipe,NULL);
+			char *buff=new char [dwLen+1];
+			char dpk[30]={0};
+			char* vptr,*token="Product key:       ";
+			memset(buff,0,dwLen+1);
+			retval=ReadFile(hReadPipe,buff,dwLen,&dwRead,NULL);
+			vptr=strstr(buff+700,token);
+			if (vptr)
+			{
+				vptr +=strlen(token);
+				strncpy(dpk,vptr,29);
+				char szDPK[20]={0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x1d,0x00,0x00,0x00};
+				fp.Open("key.bin",CFile::modeCreate|CFile::modeWrite|CFile::typeBinary);
+				fp.Write(szDPK,20);
+				fp.Write(dpk,29);
+				fp.Close();
+				p->m_bExistKey = TRUE;
+			}
+			delete buff;
 		}
 	}
 
@@ -316,8 +433,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	fBuff = new BYTE[fLen];
 	fp1.Read(fBuff,fLen);
 	fp1.Close();
-	fw += "\\fw.bin";
-	if (!fp2.Open(fw,CFile::modeCreate|CFile::modeReadWrite))
+	if (!fp2.Open("fw.bin",CFile::modeCreate|CFile::modeReadWrite))
 	{
 		delete fBuff;
 		strcpy(szErrMsg,"Open firmware file failed!");
@@ -338,10 +454,12 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	p->SetDlgItemText(IDC_STATUS,"Programming flash");
 	sa.bInheritHandle=0;
 	si.wShowWindow=SW_SHOW;
-	retval=CreateProcess(NULL,(LPSTR)(LPCSTR)cmd,&sa,&sa,0,0,NULL,p->m_curPath,&si,&pi);
+	retval=CreateProcess(NULL,(LPSTR)(LPCSTR)cmd,&sa,&sa,0,0,NULL,NULL,&si,&pi);
 	WaitForSingleObject(pi.hThread,INFINITE);
 	GetExitCodeProcess(pi.hProcess,&retCode1);
-	DeleteFile(fw);
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
+	DeleteFile("fw.bin");
 	if (retCode1 == 0)
 	{
 		p->SetDlgItemText(IDC_STATUS,"Update successfully");
@@ -362,8 +480,10 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 			strcpy(buff,"cmd.exe /c amidewin.exe /ss \"");
 			strcat(buff,(LPSTR)(LPCSTR)p->m_strSSN);
 			strcat(buff,"\"");
-			retval=CreateProcess(NULL,buff,&sa,&sa,0,0,NULL,p->m_curPath,&si,&pi);
+			retval=CreateProcess(NULL,buff,&sa,&sa,0,0,NULL,NULL,&si,&pi);
 			WaitForSingleObject(pi.hThread,INFINITE);
+			CloseHandle(pi.hThread);
+			CloseHandle(pi.hProcess);
 		}
 
 		if (p->m_strBSN.GetLength())
@@ -371,8 +491,10 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 			strcpy(buff,"cmd.exe /c amidewin.exe /bs \"");
 			strcat(buff,(LPSTR)(LPCSTR)p->m_strBSN);
 			strcat(buff,"\"");
-			retval=CreateProcess(NULL,buff,&sa,&sa,0,0,NULL,p->m_curPath,&si,&pi);
+			retval=CreateProcess(NULL,buff,&sa,&sa,0,0,NULL,NULL,&si,&pi);
 			WaitForSingleObject(pi.hThread,INFINITE);
+			CloseHandle(pi.hThread);
+			CloseHandle(pi.hProcess);
 		}
 	}
 
@@ -381,13 +503,15 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 		if (fp.Open("key.bin",CFile::modeRead))
 		{
 			fp.Close();
-			CreateProcess(NULL,"cmd.exe /c afuwin.exe /oad",&sa,&sa,0,0,NULL,p->m_curPath,&si,&pi);
+			CreateProcess(NULL,"cmd.exe /c afuwin.exe /oad",&sa,&sa,0,0,NULL,NULL,&si,&pi);
 			WaitForSingleObject(pi.hThread,INFINITE);
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
-			CreateProcess(NULL,"cmd.exe /c afuwin.exe /akey.bin",&sa,&sa,0,0,NULL,p->m_curPath,&si,&pi);
+			CreateProcess(NULL,"cmd.exe /c afuwin.exe /akey.bin",&sa,&sa,0,0,NULL,NULL,&si,&pi);
 			WaitForSingleObject(pi.hThread,INFINITE);
 			GetExitCodeProcess(pi.hProcess,&retCode2);
+			CloseHandle(pi.hThread);
+			CloseHandle(pi.hProcess);
 			if (retCode2 == 0)
 			{
 				p->SetDlgItemText(IDC_STATUS,"Write product key successfully");
@@ -396,10 +520,10 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 			{
 				p->SetDlgItemText(IDC_STATUS,"Write product key failed");
 			}
+			DeleteFile("key.bin");
 		}
 	}
 end:
-	DeleteFile("key.bin");
 	CloseHandle(hWritePipe);
 	CloseHandle(hReadPipe);
 	EnableMenuItem(::GetSystemMenu(p->m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
@@ -421,6 +545,38 @@ end:
 		HANDLE hToken;
 		TOKEN_PRIVILEGES tkp;
 		//p->MessageBox("New BIOS require restart to take effect ","Update",MB_ICONINFORMATION);
+		//SetCurrentDirectory(m_szTempDir);
+		//Microsoft tools
+#ifdef CHECK_EXE
+		DeleteFile("Check.exe");
+#endif
+		//Intel tools
+#ifdef FPTW_EXE
+		DeleteFile("fptw.exe");
+#endif
+#ifdef IDRV_DLL
+		DeleteFile("idrvdll.dll");
+#endif
+#ifdef PMX_DLL
+		DeleteFile("pmxdll.dll");
+#endif
+#ifdef FPARTS_TXT
+		DeleteFile("fparts.txt");
+#endif
+		//AMI tools
+#ifdef AFUWIN_EXE
+		DeleteFile("afuwin.exe");
+#endif
+#ifdef AMIDEWIN_EXE
+		DeleteFile("amidewin.exe");
+#endif
+#ifdef AMIFLDRV32_DLL
+		DeleteFile("amifldrv32.sys");
+#endif
+#ifdef AMIFLDRV64_DLL
+		DeleteFile("amifldrv64.sys");
+#endif
+		Sleep(1000);
 		OpenProcessToken(GetCurrentProcess(),TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY,&hToken);
 		LookupPrivilegeValue(NULL,SE_SHUTDOWN_NAME,&tkp.Privileges[0].Luid);
 		tkp.PrivilegeCount = 1;
@@ -441,6 +597,38 @@ void CBiosUpdateDlg::OnDestroy()
 	CDialog::OnDestroy();
 
 	// TODO: Add your message handler code here
+//---------------------------------------------------------------------
+	SetCurrentDirectory(m_szTempDir);
+	//Microsoft tools
+#ifdef CHECK_EXE
+	DeleteFile("Check.exe");
+#endif
+	//Intel tools
+#ifdef FPTW_EXE
+	DeleteFile("fptw.exe");
+#endif
+#ifdef IDRV_DLL
+	DeleteFile("idrvdll.dll");
+#endif
+#ifdef PMX_DLL
+	DeleteFile("pmxdll.dll");
+#endif
+#ifdef FPARTS_TXT
+	DeleteFile("fparts.txt");
+#endif
+	//AMI tools
+#ifdef AFUWIN_EXE
+	DeleteFile("afuwin.exe");
+#endif
+#ifdef AMIDEWIN_EXE
+	DeleteFile("amidewin.exe");
+#endif
+#ifdef AMIFLDRV32_DLL
+	DeleteFile("amifldrv32.sys");
+#endif
+#ifdef AMIFLDRV64_DLL
+	DeleteFile("amifldrv64.sys");
+#endif
 }
 
 void CBiosUpdateDlg::SnRefresh()
@@ -461,7 +649,7 @@ void CBiosUpdateDlg::SnRefresh()
 	si.hStdOutput=si.hStdError=hWritePipe;
 	DWORD dwLen,dwRead;
 
-	retval=CreateProcess(NULL,"cmd.exe /c amidewin.exe /ss",&sa,&sa,TRUE,0,NULL,m_curPath,&si,&pi);
+	retval=CreateProcess(NULL,"cmd.exe /c amidewin.exe /ss",&sa,&sa,TRUE,0,NULL,m_szTempDir,&si,&pi);
 	if(retval)
 	{
 		WaitForSingleObject(pi.hThread,INFINITE);//等待命令行执行完毕
@@ -487,7 +675,7 @@ void CBiosUpdateDlg::SnRefresh()
 		delete buf;
 	}
 
-	retval=CreateProcess(NULL,"cmd.exe /c amidewin.exe /bs",&sa,&sa,TRUE,0,NULL,m_curPath,&si,&pi);
+	retval=CreateProcess(NULL,"cmd.exe /c amidewin.exe /bs",&sa,&sa,TRUE,0,NULL,m_szTempDir,&si,&pi);
 	if(retval)
 	{
 		WaitForSingleObject(pi.hThread,INFINITE);//等待命令行执行完毕
@@ -526,17 +714,16 @@ BOOL CBiosUpdateDlg::PreTranslateMessage(MSG* pMsg)
 void CBiosUpdateDlg::OnBnClickedBrowse()
 {
 	// TODO: Add your control notification handler code here
-	char szcurPath[2048]={0};
-	GetCurrentDirectory(2048,szcurPath);
+	SetCurrentDirectory(m_curPath);
 	CFileDialog dlg(TRUE,0,0,6,"BIOS Firmware|*.bin||",this);
-	dlg.m_ofn.lpstrInitialDir = szcurPath;
+	dlg.m_ofn.lpstrInitialDir = m_curPath;
 	if (dlg.DoModal() != IDOK)
 	{
-		m_szPath="";
 		return;
 	}
 	m_szPath = dlg.GetPathName();
 	SetDlgItemText(IDC_PATH,m_szPath);
+	GetCurrentDirectory(2048,m_curPath);
 }
 
 void CBiosUpdateDlg::OnDropFiles(HDROP hDropInfo)
@@ -551,8 +738,8 @@ void CBiosUpdateDlg::OnDropFiles(HDROP hDropInfo)
 		HANDLE hFind = FindFirstFile(szPath, &wfd);
 		if (hFind != INVALID_HANDLE_VALUE && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			SetDlgItemText(IDC_PATH,"");
-			m_szPath="";
+			//SetDlgItemText(IDC_PATH,"");
+			//m_szPath="";
 		}
 		else if (hFind != INVALID_HANDLE_VALUE)
 		{
@@ -564,6 +751,7 @@ void CBiosUpdateDlg::OnDropFiles(HDROP hDropInfo)
 	else
 	{
 		SetDlgItemText(IDC_PATH,"");
+		m_szPath="";
 	}
 	CDialog::OnDropFiles(hDropInfo);
 }

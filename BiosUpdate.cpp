@@ -53,8 +53,8 @@ BOOL CBiosUpdateApp::InitInstance()
 	m_hMutex=OpenMutex(MUTEX_ALL_ACCESS,FALSE,"BiosUpdate");
 	if(m_hMutex)
 	{
-		//AfxMessageBox("程序已经启动，请双击对应的系统图标打开程序！",MB_ICONERROR);
-		HWND hWnd=FindWindow(NULL,"BiosUpdate v1.8");
+		AfxMessageBox("Program is running",MB_ICONERROR);
+		HWND hWnd=FindWindow(NULL,"BiosUpdate");
 		if (hWnd)
 		{
 			if(!IsWindowVisible(hWnd))
