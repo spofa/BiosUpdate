@@ -118,7 +118,7 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	hGl = LoadResource(NULL,hSrc);
 	dwLen = SizeofResource(NULL,hSrc);
 	lpBuf = (LPBYTE)LockResource(hGl);
-	bRet = fp.Open("idrvdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	bRet = fp.Open("idrvdll32e.dll",CFile::modeCreate|CFile::modeReadWrite);
 	fp.Write((LPBYTE)lpBuf,dwLen);
 	fp.Close();
 #endif
@@ -127,7 +127,7 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	hGl = LoadResource(NULL,hSrc);
 	dwLen = SizeofResource(NULL,hSrc);
 	lpBuf = (LPBYTE)LockResource(hGl);
-	bRet = fp.Open("pmxdll.dll",CFile::modeCreate|CFile::modeReadWrite);
+	bRet = fp.Open("pmxdll32e.dll",CFile::modeCreate|CFile::modeReadWrite);
 	fp.Write((LPBYTE)lpBuf,dwLen);
 	fp.Close();
 #endif
@@ -218,7 +218,7 @@ void CBiosUpdateDlg::OnPaint()
 		CFont* oldFont=dc.SelectObject(&font);
 		dc.SetBkMode(TRANSPARENT);
 		dc.SetTextColor(RGB(128,128,200));
-		dc.DrawText("For CherryTrail x86 only v2.1",&rc,DT_LEFT);
+		dc.DrawText("For CherryTrail x64 only v2.1",&rc,DT_LEFT);
 		dc.SelectObject(oldFont);
 		font.DeleteObject();
 		dc.RestoreDC(odc);
@@ -573,10 +573,10 @@ end:
 		DeleteFile("fptw.exe");
 #endif
 #ifdef IDRV_DLL
-		DeleteFile("idrvdll.dll");
+		DeleteFile("idrvdll32e.dll");
 #endif
 #ifdef PMX_DLL
-		DeleteFile("pmxdll.dll");
+		DeleteFile("pmxdll32e.dll");
 #endif
 #ifdef FPARTS_TXT
 		DeleteFile("fparts.txt");
@@ -626,10 +626,10 @@ void CBiosUpdateDlg::OnDestroy()
 	DeleteFile("fptw.exe");
 #endif
 #ifdef IDRV_DLL
-	DeleteFile("idrvdll.dll");
+	DeleteFile("idrvdll32e.dll");
 #endif
 #ifdef PMX_DLL
-	DeleteFile("pmxdll.dll");
+	DeleteFile("pmxdll32e.dll");
 #endif
 #ifdef FPARTS_TXT
 	DeleteFile("fparts.txt");
