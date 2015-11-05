@@ -85,7 +85,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT | SS_SUNKEN,0,55,275,1
     PUSHBUTTON      "Browse...",IDC_BROWSE,225,33,45,15
     CONTROL         "S/N reserved",IDC_SNCHK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,203,10,58,10
-    LTEXT           "For CherryTrail Only v2.0",IDC_STATIC,16,10,82,8,WS_DISABLED
+    LTEXT           "For CherryTrail Only v2.0",IDC_STATIC,16,10,82,8,NOT WS_VISIBLE | WS_DISABLED
 END
 
 
@@ -95,8 +95,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,0,0
- PRODUCTVERSION 2,0,0,0
+ FILEVERSION 2,1,0,0
+ PRODUCTVERSION 2,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -112,13 +112,13 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Techvision Intelligent Technology Co.,LTD."
-            VALUE "FileDescription", "BIOS Update Tool For CherryTrail Only"
-            VALUE "FileVersion", "2.0"
-            VALUE "InternalName", "BiosUpdate_CherryTrail.exe"
+            VALUE "FileDescription", "BIOS Update Tool For CherryTrail Only(x86)"
+            VALUE "FileVersion", "2.1"
+            VALUE "InternalName", "BiosUpdate_CherryTrail_x86.exe"
             VALUE "LegalCopyright", "Techvision Corporation(C).  All rights reserved."
-            VALUE "OriginalFilename", "BiosUpdate_CherryTrail.exe"
+            VALUE "OriginalFilename", "BiosUpdate_CherryTrail_x86.exe"
             VALUE "ProductName", "BiosUpdate"
-            VALUE "ProductVersion", "2.0"
+            VALUE "ProductVersion", "2.1"
             VALUE "SpecialBuild", "10240"
         END
     END

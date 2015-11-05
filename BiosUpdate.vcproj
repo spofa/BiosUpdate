@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="BiosUpdate_CherryTrail"
+	Name="BiosUpdate_CherryTrail_x86"
 	ProjectGUID="{6DAD19B9-6B84-46E2-8A31-B9690488657E}"
 	RootNamespace="BiosUpdate"
 	Keyword="MFCProj"
