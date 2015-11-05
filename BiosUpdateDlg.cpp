@@ -205,6 +205,23 @@ void CBiosUpdateDlg::OnPaint()
 	}
 	else
 	{
+		CRect rc(5,12,245,32);
+		CFont font;
+		LOGFONT logFont;
+		GetObject(GetStockObject(DEFAULT_GUI_FONT),sizeof(LOGFONT),&logFont);
+		logFont.lfHeight=-16;
+		logFont.lfItalic=1;
+		logFont.lfWeight=600;
+		font.CreateFontIndirectA(&logFont);
+		CPaintDC dc(this);
+		int odc=dc.SaveDC();
+		CFont* oldFont=dc.SelectObject(&font);
+		dc.SetBkMode(TRANSPARENT);
+		dc.SetTextColor(RGB(128,128,200));
+		dc.DrawText("For Core-M x64 only v2.1",&rc,DT_LEFT);
+		dc.SelectObject(oldFont);
+		font.DeleteObject();
+		dc.RestoreDC(odc);
 		CDialog::OnPaint();
 	}
 }
