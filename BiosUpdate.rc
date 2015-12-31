@@ -84,8 +84,9 @@ BEGIN
     EDITTEXT        IDC_PATH,54,34,167,13,ES_AUTOHSCROLL | ES_READONLY
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT | SS_SUNKEN,0,55,275,1
     PUSHBUTTON      "Browse...",IDC_BROWSE,225,33,45,15
-    CONTROL         "S/N reserved",IDC_SNCHK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,203,10,58,10
+    CONTROL         "S/N reserved",IDC_SNCHK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,10,58,10
     LTEXT           "For BayTrail Only v2.0",IDC_STATIC,16,10,72,8,NOT WS_VISIBLE | WS_DISABLED
+    CONTROL         "TXE",IDC_TXE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,10,28,10
 END
 
 
@@ -95,8 +96,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,0,0
- PRODUCTVERSION 2,1,0,0
+ FILEVERSION 2,2,0,0
+ PRODUCTVERSION 2,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -113,13 +114,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Techvision Intelligent Technology Co.,LTD."
             VALUE "FileDescription", "BIOS Update Tool For BayTrail Only(x86)"
-            VALUE "FileVersion", "2.1"
+            VALUE "FileVersion", "2.2"
             VALUE "InternalName", "BiosUpdate_BayTrail_x86.exe"
             VALUE "LegalCopyright", "Techvision Corporation(C).  All rights reserved."
             VALUE "OriginalFilename", "BiosUpdate_BayTrail_x86.exe"
             VALUE "ProductName", "BiosUpdate"
-            VALUE "ProductVersion", "2.1"
-            VALUE "SpecialBuild", "10240"
+            VALUE "ProductVersion", "2.2"
+            VALUE "SpecialBuild", "10586"
         END
     END
     BLOCK "VarFileInfo"
