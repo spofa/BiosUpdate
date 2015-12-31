@@ -218,7 +218,7 @@ void CBiosUpdateDlg::OnPaint()
 		CFont* oldFont=dc.SelectObject(&font);
 		dc.SetBkMode(TRANSPARENT);
 		dc.SetTextColor(RGB(128,128,200));
-		dc.DrawText("For Core-M x64 only v2.1",&rc,DT_LEFT);
+		dc.DrawText("For Core-M x64 only v2.2",&rc,DT_LEFT);
 		dc.SelectObject(oldFont);
 		font.DeleteObject();
 		dc.RestoreDC(odc);
@@ -247,6 +247,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	CString szBios;
 	EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_DISABLED);
 	GetDlgItem(IDC_SNCHK)->EnableWindow(0);
+	GetDlgItem(IDC_TXE)->EnableWindow(0);
 	GetDlgItem(IDC_UPDATE)->EnableWindow(0);
 	GetDlgItem(IDC_BROWSE)->EnableWindow(0);
 	SnRefresh();
@@ -254,6 +255,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	{
 		MessageBox("No bios firmware found!","Error",MB_ICONSTOP);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
+		GetDlgItem(IDC_TXE)->EnableWindow();
 		GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
 		GetDlgItem(IDC_BROWSE)->EnableWindow();
@@ -264,6 +266,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	{
 		MessageBox("Bios file not found!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
+		GetDlgItem(IDC_TXE)->EnableWindow();
 		GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
 		GetDlgItem(IDC_BROWSE)->EnableWindow();
@@ -274,6 +277,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	{
 		MessageBox("Bios file is invalid!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
+		GetDlgItem(IDC_TXE)->EnableWindow();
 		GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
 		GetDlgItem(IDC_BROWSE)->EnableWindow();
@@ -286,6 +290,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	{
 		MessageBox("Bios file is invalid!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
+		GetDlgItem(IDC_TXE)->EnableWindow();
 		GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
 		GetDlgItem(IDC_BROWSE)->EnableWindow();
@@ -329,6 +334,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	BYTE* fBuff;
 	CString cmd;
 	SetCurrentDirectory(p->m_szTempDir);
+	CButton* pBtn = (CButton*)p->GetDlgItem(IDC_TXE);
 	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -i",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
 	if(retval)
 	{
@@ -461,7 +467,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	fp2.Close();
 	delete fBuff;
 
-	if (nLock == 0)
+	if (nLock == 0 && pBtn->GetCheck() == BST_CHECKED)
 	{
 		cmd="cmd.exe /c fptw.exe -f fw.bin";
 	}
@@ -546,6 +552,7 @@ end:
 	CloseHandle(hReadPipe);
 	EnableMenuItem(::GetSystemMenu(p->m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
 	p->GetDlgItem(IDC_SNCHK)->EnableWindow();
+	p->GetDlgItem(IDC_TXE)->EnableWindow();
 	p->GetDlgItem(IDC_UPDATE)->EnableWindow();
 	p->GetDlgItem(IDC_BROWSE)->EnableWindow();
 /*
