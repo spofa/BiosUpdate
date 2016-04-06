@@ -71,22 +71,18 @@ IDR_MAINFRAME           ICON                    "res\\BiosUpdate.ico"
 // Dialog
 //
 
-IDD_BIOSUPDATE_DIALOG DIALOGEX 0, 0, 275, 92
+IDD_BIOSUPDATE_DIALOG DIALOGEX 0, 0, 228, 92
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "BiosUpdate"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Update",IDC_UPDATE,112,60,50,16
-    LTEXT           "",IDC_STATUS,0,80,275,12,SS_CENTERIMAGE,WS_EX_STATICEDGE
-    GROUPBOX        "",IDC_STATIC,2,0,271,25
+    DEFPUSHBUTTON   "Update",IDC_UPDATE,89,60,50,16
+    LTEXT           "",IDC_STATUS,0,80,228,12,SS_CENTERIMAGE,WS_EX_STATICEDGE
+    GROUPBOX        "",IDC_STATIC,0,0,228,25
     LTEXT           "Bios Firmware:",IDC_STATIC,5,36,48,8
     EDITTEXT        IDC_PATH,54,34,167,13,ES_AUTOHSCROLL | ES_READONLY
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT | SS_SUNKEN,0,55,275,1
-    PUSHBUTTON      "Browse...",IDC_BROWSE,225,33,45,15
-    CONTROL         "S/N reserved",IDC_SNCHK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,211,10,58,10
-    LTEXT           "For BayTrail Only v2.0",IDC_STATIC,16,10,72,8,NOT WS_VISIBLE | WS_DISABLED
-    CONTROL         "TXE",IDC_TXE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,10,28,10
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT | SS_SUNKEN,0,55,228,1
 END
 
 
@@ -96,8 +92,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,0,0
- PRODUCTVERSION 2,2,0,0
+ FILEVERSION 2,3,0,0
+ PRODUCTVERSION 2,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -114,12 +110,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Techvision Intelligent Technology Co.,LTD."
             VALUE "FileDescription", "BIOS Update Tool For BayTrail Only(x86)"
-            VALUE "FileVersion", "2.2"
+            VALUE "FileVersion", "2.3"
             VALUE "InternalName", "BiosUpdate_BayTrail_x86.exe"
             VALUE "LegalCopyright", "Techvision Corporation(C).  All rights reserved."
             VALUE "OriginalFilename", "BiosUpdate_BayTrail_x86.exe"
             VALUE "ProductName", "BiosUpdate"
-            VALUE "ProductVersion", "2.2"
+            VALUE "ProductVersion", "2.3"
             VALUE "SpecialBuild", "10586"
         END
     END

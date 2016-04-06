@@ -178,6 +178,25 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	fp.Close();
 #endif
 	SetWindowPos(&CWnd::wndTopMost,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	//////////////////////////////////////////////////////////////
+	WIN32_FIND_DATA wfd = {0};
+	//CFileFind
+	CString tmp(m_curPath);
+	tmp +="\\*.bin";
+	HANDLE hFind = FindFirstFile(tmp,&wfd);
+	if (hFind != INVALID_HANDLE_VALUE && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+	{
+		m_szPath=wfd.cFileName;
+		SetDlgItemText(IDC_PATH,m_szPath);
+	}
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		FindClose(hFind);
+	}
+	else
+	{
+		//SetDlgItemText(IDC_PATH,"No bios firmware found!");
+	}
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -206,7 +225,7 @@ void CBiosUpdateDlg::OnPaint()
 	}
 	else
 	{
-		CRect rc(5,12,245,32);
+		CRect rc(5,12,325,32);
 		CFont font;
 		LOGFONT logFont;
 		GetObject(GetStockObject(DEFAULT_GUI_FONT),sizeof(LOGFONT),&logFont);
@@ -219,7 +238,7 @@ void CBiosUpdateDlg::OnPaint()
 		CFont* oldFont=dc.SelectObject(&font);
 		dc.SetBkMode(TRANSPARENT);
 		dc.SetTextColor(RGB(128,128,200));
-		dc.DrawText("For BayTrail x86 only v2.2",&rc,DT_LEFT);
+		dc.DrawText("For BayTrail x86 only v2.3",&rc,DT_CENTER);
 		dc.SelectObject(oldFont);
 		font.DeleteObject();
 		dc.RestoreDC(odc);
@@ -247,41 +266,45 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	m_bExistKey = FALSE;
 	CString szBios;
 	EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_DISABLED);
-	GetDlgItem(IDC_SNCHK)->EnableWindow(0);
-	GetDlgItem(IDC_TXE)->EnableWindow(0);
+	//GetDlgItem(IDC_SNCHK)->EnableWindow(0);
+	//GetDlgItem(IDC_TXE)->EnableWindow(0);
 	GetDlgItem(IDC_UPDATE)->EnableWindow(0);
-	GetDlgItem(IDC_BROWSE)->EnableWindow(0);
+	//GetDlgItem(IDC_BROWSE)->EnableWindow(0);
 	SnRefresh();
 	if (m_szPath.GetLength()<=0) 
 	{
 		MessageBox("No bios firmware found!","Error",MB_ICONSTOP);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
-		GetDlgItem(IDC_TXE)->EnableWindow();
-		GetDlgItem(IDC_SNCHK)->EnableWindow();
+		//GetDlgItem(IDC_TXE)->EnableWindow();
+		//GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
-		GetDlgItem(IDC_BROWSE)->EnableWindow();
+		//GetDlgItem(IDC_BROWSE)->EnableWindow();
 		return;
 	}
 	CFile fp;
-	if (!fp.Open(m_szPath,CFile::modeRead|CFile::typeBinary))
+	CString tmp(m_curPath);
+	tmp += "\\";
+	tmp += m_szPath;
+	if (!fp.Open(tmp,CFile::modeRead|CFile::typeBinary))
 	{
 		MessageBox("Bios file not found!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
-		GetDlgItem(IDC_TXE)->EnableWindow();
-		GetDlgItem(IDC_SNCHK)->EnableWindow();
+		//GetDlgItem(IDC_TXE)->EnableWindow();
+		//GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
-		GetDlgItem(IDC_BROWSE)->EnableWindow();
+		//GetDlgItem(IDC_BROWSE)->EnableWindow();
 		return;
 	}
+	tmp.ReleaseBuffer();
 	ULONG len=(ULONG)fp.GetLength();
 	if (len != 8388608)
 	{
 		MessageBox("Bios file is invalid!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
-		GetDlgItem(IDC_TXE)->EnableWindow();
-		GetDlgItem(IDC_SNCHK)->EnableWindow();
+		//GetDlgItem(IDC_TXE)->EnableWindow();
+		//GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
-		GetDlgItem(IDC_BROWSE)->EnableWindow();
+		//GetDlgItem(IDC_BROWSE)->EnableWindow();
 		fp.Close();
 		return;
 	}
@@ -291,10 +314,10 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 	{
 		MessageBox("Bios file is invalid!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
-		GetDlgItem(IDC_TXE)->EnableWindow();
-		GetDlgItem(IDC_SNCHK)->EnableWindow();
+		//GetDlgItem(IDC_TXE)->EnableWindow();
+		//GetDlgItem(IDC_SNCHK)->EnableWindow();
 		GetDlgItem(IDC_UPDATE)->EnableWindow();
-		GetDlgItem(IDC_BROWSE)->EnableWindow();
+		//GetDlgItem(IDC_BROWSE)->EnableWindow();
 		fp.Close();
 		return;
 	}
@@ -334,8 +357,9 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	DWORD fLen;
 	BYTE* fBuff;
 	CString cmd;
+	CString tmp(p->m_curPath);
 	SetCurrentDirectory(p->m_szTempDir);
-	CButton* pBtn = (CButton*)p->GetDlgItem(IDC_TXE);
+	//CButton* pBtn = (CButton*)p->GetDlgItem(IDC_TXE);
 	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -i",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
 	if(retval)
 	{
@@ -449,11 +473,14 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 		}
 	}
 
-	if (!fp1.Open(p->m_szPath,CFile::modeRead|CFile::typeBinary))
+	tmp += "\\";
+	tmp += p->m_szPath;
+	if (!fp1.Open(tmp,CFile::modeRead|CFile::typeBinary))
 	{
 		strcpy(szErrMsg,"Can't find the firmware, please check whether is exist!");
 		goto end;
 	}
+	tmp.ReleaseBuffer();
 	fLen=(DWORD)fp1.GetLength();
 	fBuff = new BYTE[fLen];
 	fp1.Read(fBuff,fLen);
@@ -468,7 +495,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	fp2.Close();
 	delete fBuff;
 
-	if (nLock == 0 && pBtn->GetCheck() == BST_CHECKED)
+	if (nLock == 0)
 	{
 		cmd="cmd.exe /c fptw.exe -f fw.bin";
 	}
@@ -498,7 +525,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	}
 
 	si.wShowWindow=SW_HIDE;
-	if (p->m_nSN == BST_CHECKED)
+	if (1 || p->m_nSN == BST_CHECKED)
 	{
 		if (p->m_strSSN.GetLength())
 		{
@@ -552,10 +579,10 @@ end:
 	CloseHandle(hWritePipe);
 	CloseHandle(hReadPipe);
 	EnableMenuItem(::GetSystemMenu(p->m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
-	p->GetDlgItem(IDC_SNCHK)->EnableWindow();
-	p->GetDlgItem(IDC_TXE)->EnableWindow();
+	//p->GetDlgItem(IDC_SNCHK)->EnableWindow();
+	//p->GetDlgItem(IDC_TXE)->EnableWindow();
 	p->GetDlgItem(IDC_UPDATE)->EnableWindow();
-	p->GetDlgItem(IDC_BROWSE)->EnableWindow();
+	//p->GetDlgItem(IDC_BROWSE)->EnableWindow();
 /*
 	if (retCode2 != 0 && retCode2 != -1)
 	{
@@ -785,5 +812,5 @@ void CBiosUpdateDlg::OnDropFiles(HDROP hDropInfo)
 void CBiosUpdateDlg::OnBnClickedSnchk()
 {
 	// TODO: Add your control notification handler code here
-	m_nSN = ((CButton*)GetDlgItem(IDC_SNCHK))->GetCheck();
+	//m_nSN = ((CButton*)GetDlgItem(IDC_SNCHK))->GetCheck();
 }
