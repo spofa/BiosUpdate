@@ -112,6 +112,14 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 	bRet = fp.Open("fptw.exe",CFile::modeCreate|CFile::modeReadWrite);
 	fp.Write((LPBYTE)lpBuf,dwLen);
 	fp.Close();
+
+	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_ROM),"DATA");
+	hGl = LoadResource(NULL,hSrc);
+	dwLen = SizeofResource(NULL,hSrc);
+	lpBuf = (LPBYTE)LockResource(hGl);
+	bRet = fp.Open("rom.bin",CFile::modeCreate|CFile::modeReadWrite);
+	fp.Write((LPBYTE)lpBuf,dwLen);
+	fp.Close();
 #endif
 #ifdef IDRV_DLL
 	hSrc = FindResource(NULL,MAKEINTRESOURCE(IDR_IDRVDLL),"DATA");
@@ -179,24 +187,8 @@ BOOL CBiosUpdateDlg::OnInitDialog()
 #endif
 	SetWindowPos(&CWnd::wndTopMost,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
 	//////////////////////////////////////////////////////////////
-	WIN32_FIND_DATA wfd = {0};
-	//CFileFind
-	CString tmp(m_curPath);
-	tmp +="\\*.bin";
-	HANDLE hFind = FindFirstFile(tmp,&wfd);
-	if (hFind != INVALID_HANDLE_VALUE && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-	{
-		m_szPath=wfd.cFileName;
-		SetDlgItemText(IDC_PATH,m_szPath);
-	}
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		FindClose(hFind);
-	}
-	else
-	{
-		//SetDlgItemText(IDC_PATH,"No bios firmware found!");
-	}
+	m_szPath=m_szTempDir;
+	m_szPath +="\\rom.bin";
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -282,10 +274,7 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 		return;
 	}
 	CFile fp;
-	CString tmp(m_curPath);
-	tmp += "\\";
-	tmp += m_szPath;
-	if (!fp.Open(tmp,CFile::modeRead|CFile::typeBinary))
+	if (!fp.Open(m_szPath,CFile::modeRead|CFile::typeBinary))
 	{
 		MessageBox("Bios file not found!","Error",MB_ICONERROR);
 		EnableMenuItem(::GetSystemMenu(m_hWnd,FALSE),SC_CLOSE,MF_BYCOMMAND|MF_ENABLED);
@@ -295,7 +284,6 @@ void CBiosUpdateDlg::OnBnClickedUpdate()
 		//GetDlgItem(IDC_BROWSE)->EnableWindow();
 		return;
 	}
-	tmp.ReleaseBuffer();
 	ULONG len=(ULONG)fp.GetLength();
 	if (len != 8388608)
 	{
@@ -353,11 +341,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	UINT nActualBiosSize=0,nLock=0;
 	char buff[256] = {0},szErrMsg[256]={0};
 	CFile fp;
-	CFile fp1,fp2;
-	DWORD fLen;
-	BYTE* fBuff;
 	CString cmd;
-	CString tmp(p->m_curPath);
 	SetCurrentDirectory(p->m_szTempDir);
 	//CButton* pBtn = (CButton*)p->GetDlgItem(IDC_TXE);
 	retval=CreateProcess(NULL,"cmd.exe /c fptw.exe -i",&sa,&sa,TRUE,0,NULL,NULL,&si,&pi);
@@ -473,35 +457,13 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 		}
 	}
 
-	tmp += "\\";
-	tmp += p->m_szPath;
-	if (!fp1.Open(tmp,CFile::modeRead|CFile::typeBinary))
-	{
-		strcpy(szErrMsg,"Can't find the firmware, please check whether is exist!");
-		goto end;
-	}
-	tmp.ReleaseBuffer();
-	fLen=(DWORD)fp1.GetLength();
-	fBuff = new BYTE[fLen];
-	fp1.Read(fBuff,fLen);
-	fp1.Close();
-	if (!fp2.Open("fw.bin",CFile::modeCreate|CFile::modeReadWrite))
-	{
-		delete fBuff;
-		strcpy(szErrMsg,"Open firmware file failed!");
-		goto end;
-	}
-	fp2.Write(fBuff,fLen);
-	fp2.Close();
-	delete fBuff;
-
 	if (nLock == 0)
 	{
-		cmd="cmd.exe /c fptw.exe -f fw.bin";
+		cmd="cmd.exe /c fptw.exe -f rom.bin";
 	}
 	else
 	{
-		cmd="cmd.exe /c fptw.exe -f fw.bin -bios";
+		cmd="cmd.exe /c fptw.exe -f rom.bin -bios";
 	}
 	p->SetDlgItemText(IDC_STATUS,"Programming flash");
 	sa.bInheritHandle=0;
@@ -511,7 +473,7 @@ UINT CBiosUpdateDlg::KeyThread(LPVOID lp)
 	GetExitCodeProcess(pi.hProcess,&retCode1);
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
-	DeleteFile("fw.bin");
+	DeleteFile("rom.bin");
 	if (retCode1 == 0)
 	{
 		p->SetDlgItemText(IDC_STATUS,"Update successfully");
@@ -659,6 +621,7 @@ void CBiosUpdateDlg::OnDestroy()
 	//Intel tools
 #ifdef FPTW_EXE
 	DeleteFile("fptw.exe");
+	DeleteFile("rom.bin");
 #endif
 #ifdef IDRV_DLL
 	DeleteFile("idrvdll.dll");

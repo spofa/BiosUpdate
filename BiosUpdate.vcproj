@@ -259,6 +259,10 @@
 				RelativePath=".\res\BiosUpdate.rc2"
 				>
 			</File>
+			<File
+				RelativePath=".\res\rom.bin"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\res\afuwin.exe"

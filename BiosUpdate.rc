@@ -71,18 +71,15 @@ IDR_MAINFRAME           ICON                    "res\\BiosUpdate.ico"
 // Dialog
 //
 
-IDD_BIOSUPDATE_DIALOG DIALOGEX 0, 0, 228, 92
+IDD_BIOSUPDATE_DIALOG DIALOGEX 0, 0, 228, 63
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "BiosUpdate"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Update",IDC_UPDATE,89,60,50,16
-    LTEXT           "",IDC_STATUS,0,80,228,12,SS_CENTERIMAGE,WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "Update",IDC_UPDATE,88,32,50,16
+    LTEXT           "",IDC_STATUS,0,50,228,12,SS_CENTERIMAGE,WS_EX_STATICEDGE
     GROUPBOX        "",IDC_STATIC,0,0,228,25
-    LTEXT           "Bios Firmware:",IDC_STATIC,5,36,48,8
-    EDITTEXT        IDC_PATH,54,34,167,13,ES_AUTOHSCROLL | ES_READONLY
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT | SS_SUNKEN,0,55,228,1
 END
 
 
@@ -140,6 +137,23 @@ IDR_FPARTS              DATA                    "res\\fparts.txt"
 IDR_FPTW                DATA                    "res\\fptw.exe"
 IDR_IDRVDLL             DATA                    "res\\Idrvdll.dll"
 IDR_CHECK               DATA                    "res\\Check.exe"
+IDR_ROM                 DATA                    "res\\rom.bin"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_BIOSUPDATE_DIALOG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 62
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
